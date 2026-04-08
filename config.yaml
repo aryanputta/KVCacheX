@@ -1,0 +1,97 @@
+runtime:
+  seed: 7
+  device: auto
+  dtype: auto
+  torch_compile: false
+  profile_cuda: true
+
+model:
+  name: distilgpt2
+  revision: main
+  trust_remote_code: false
+  max_new_tokens: 24
+  use_attention_outputs: true
+  attention_implementation: eager
+  smoke_model_name: distilgpt2
+  full_benchmark_model_name: Qwen/Qwen2.5-0.5B-Instruct
+
+workloads:
+  long_context_targets: [2048, 4096, 8192]
+  synthetic_prompt_tokens: 1536
+  streaming_chunk_tokens: 128
+  streaming_steps: 8
+  multi_turn_turns: 6
+  benchmark_prompts_path: benchmark/data/real_prompts.json
+
+benchmark:
+  modes: [no_cache, standard_cache, kvcachex]
+  repetitions: 1
+  warmup_runs: 1
+  teacher_forced_accuracy: true
+  greedy_similarity: true
+
+compression:
+  enabled: true
+  method: quantization
+  quantization_bits: 8
+  asymmetric_kv_quantization: false
+  key_quantization_scheme: affine_per_channel
+  value_quantization_scheme: affine_per_token
+  materialization_cache_enabled: false
+  materialization_chunk_cache_size: 128
+  materialization_prefix_cache_size: 16
+  segmented_prefix_enabled: true
+  segment_tail_tokens: 96
+  segment_flush_tokens: 48
+  low_rank_ratio: 0.5
+  cluster_ratio: 0.45
+  cluster_prefix_fraction: 0.7
+  min_seq_for_low_rank: 256
+  min_seq_for_clustering: 256
+
+eviction:
+  enabled: true
+  target_keep_ratio: 0.7
+  attention_threshold: 0.002
+  recent_tokens_to_keep: 128
+  pin_first_tokens: 16
+  min_tokens_to_keep: 128
+  prefill_observation_window: 64
+  prefill_head_aware_eviction: true
+  dynamic_decode_pruning: true
+  decode_prune_margin: 64
+  head_score_weight: 0.65
+  head_support_weight: 0.35
+  semantic_model_path: models/token_importance_model.pkl
+  train_if_missing: true
+  attention_weight: 0.45
+  recency_weight: 0.2
+  semantic_weight: 0.35
+
+scheduler:
+  adaptive_window: true
+  base_cache_tokens: 384
+  max_cache_tokens: 384
+  min_cache_tokens: 128
+  pressure_latency_ms: 40.0
+  pressure_memory_utilization: 0.8
+  attention_probe_interval: 12
+  compression_interval: 1
+  grow_factor: 1.2
+  shrink_factor: 0.8
+
+monitor:
+  attention_decay: 0.92
+  accuracy_warning_nll: 2.5
+  token_agreement_warning: 0.8
+
+edge:
+  simulate_edge: true
+  max_memory_bytes: 4294967296
+
+outputs:
+  metrics_csv: results/metrics.csv
+  experiment_logs: results/experiment_logs.json
+  bottleneck_report: analysis/bottleneck_report.md
+  failure_report: analysis/failure_cases.md
+  dashboard_html: dashboard/kvcachex_dashboard.html

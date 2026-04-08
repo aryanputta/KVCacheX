@@ -1,0 +1,14 @@
+[
+  {
+    "category": "long_context",
+    "text": "The architecture review described a distributed retrieval pipeline that must preserve older constraints even after dozens of follow-up changes. The document covers memory pressure during inference, the tradeoff between context retention and throughput, and how operators noticed regressions whenever summaries replaced factual anchors. It also emphasizes that earlier policy statements still govern later actions, so a system that drops old but important tokens can answer confidently yet incorrectly."
+  },
+  {
+    "category": "streaming",
+    "text": "Telemetry update: rack B shows an intermittent temperature rise, packet loss on the east aggregation switch remains below the paging threshold, and two customer sessions were rerouted after a transient DNS timeout. The on-call engineer requested that all unresolved issues remain visible until a human explicitly closes them."
+  },
+  {
+    "category": "conversation",
+    "text": "The customer says their deployment still fails after they rotated credentials, but they need us to preserve the previous logging settings, avoid restarting the production database, and keep the temporary workaround for the payment webhook until tonight's maintenance window."
+  }
+]
